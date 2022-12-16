@@ -16,7 +16,7 @@ pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
     #[serde(rename = "RowKey")]
     pub row_key: String,
     #[serde(rename = "TimeStamp")]
-    "#,
+    pub time_stamp: String,"#,
     );
 
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
