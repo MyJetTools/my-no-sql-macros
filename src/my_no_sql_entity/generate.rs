@@ -9,7 +9,7 @@ pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
     }
 
     result.insert_str(
-        pos.unwrap(),
+        pos.unwrap() + 1,
         r#"
     #[serde(rename = "PartitionKey")]
     pub partition_key: String,
