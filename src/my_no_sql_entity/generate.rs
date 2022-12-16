@@ -1,10 +1,9 @@
 use proc_macro::TokenStream;
 
-pub fn generate(ast: &syn::DeriveInput) -> TokenStream {
-    let name = &ast.ident;
-    let struct_name = name.to_string();
-
-    let mut result = String::new();
+pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
+    let mut result = input.to_string();
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+    let struct_name = ast.ident.to_string();
 
     result.push_str("impl my_no_sql_server_abstractions::MyNoSqlEntity for ");
     result.push_str(struct_name.as_str());
