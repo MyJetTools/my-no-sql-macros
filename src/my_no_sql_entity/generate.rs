@@ -36,7 +36,7 @@ pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
         }
     
         fn get_time_stamp(&self) -> i64 {
-            DateTimeAsMicroseconds::parse_iso_string(self.time_stamp.as_str())
+            rust_extensions::date_time::DateTimeAsMicroseconds::parse_iso_string(self.time_stamp.as_str())
                 .unwrap()
                 .unix_microseconds
         }
