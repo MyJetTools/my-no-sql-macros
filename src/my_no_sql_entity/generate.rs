@@ -2,6 +2,23 @@ use proc_macro::TokenStream;
 
 pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut result = input.to_string();
+    let pos = find_struct_open(result.as_bytes());
+
+    if pos.is_none() {
+        panic!("Open bracket of the structure is not found");
+    }
+
+    result.insert_str(
+        pos.unwrap(),
+        r#"
+    #[serde(rename = "PartitionKey")]
+    pub partition_key: String,
+    #[serde(rename = "RowKey")]
+    pub row_key: String,
+    #[serde(rename = "TimeStamp")]
+    "#,
+    );
+
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
     let struct_name = ast.ident.to_string();
 
@@ -27,4 +44,14 @@ pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
     );
 
     result.parse().unwrap()
+}
+
+fn find_struct_open(src: &[u8]) -> Option<usize> {
+    for i in 0..src.len() {
+        if src[i] == b'{' {
+            return Some(i);
+        }
+    }
+
+    None
 }
