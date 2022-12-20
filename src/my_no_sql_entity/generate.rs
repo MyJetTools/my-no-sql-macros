@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
 use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
-    println!("attr: {}", attr.to_string());
+    let params = get_params(attr.to_string());
+    println!("param: {:?}", params);
 
     let mut result = input.to_string();
     let pos = find_struct_open(result.as_bytes());
@@ -56,4 +59,22 @@ fn find_struct_open(src: &[u8]) -> Option<usize> {
     }
 
     None
+}
+
+fn get_params(attr: String) -> HashMap<String, String> {
+    let count_commas = attr.chars().filter(|&c| c == ',').count();
+    let count_dots = attr.chars().filter(|&c| c == '.').count();
+
+    let separator = if count_commas > count_dots { ',' } else { '.' };
+
+    let mut result = HashMap::new();
+    for param in attr.split(separator) {
+        let mut param = param.split('=');
+        let key = param.next().unwrap().trim().to_string();
+        let value = param.next().unwrap().trim().to_string();
+
+        result.insert(key, value);
+    }
+
+    result
 }
