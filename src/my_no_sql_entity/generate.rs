@@ -1,6 +1,8 @@
 use proc_macro::TokenStream;
 
-pub fn generate(_attr: TokenStream, input: TokenStream) -> TokenStream {
+pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
+    println!("attr: {}", attr.to_string());
+
     let mut result = input.to_string();
     let pos = find_struct_open(result.as_bytes());
 
