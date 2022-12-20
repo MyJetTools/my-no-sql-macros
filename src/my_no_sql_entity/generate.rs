@@ -3,15 +3,22 @@ use std::collections::HashMap;
 use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
-    let params = get_params(attr.to_string());
-    println!("param: {:?}", params);
-
     let mut result = input.to_string();
     let pos = find_struct_open(result.as_bytes());
 
     if pos.is_none() {
         panic!("Open bracket of the structure is not found");
     }
+
+    let mut params = get_params(attr.to_string());
+
+    let table_name = params.remove("table_name");
+
+    if table_name.is_none() {
+        panic!("Please specify table_name parameter");
+    }
+
+    let table_name = table_name.unwrap();
 
     result.insert_str(
         pos.unwrap() + 1,
@@ -30,8 +37,11 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     result.push_str("impl my_no_sql_server_abstractions::MyNoSqlEntity for ");
     result.push_str(struct_name.as_str());
 
+    result.push_str("{     const TABLE_NAME: &'static str = ");
+    result.push_str(table_name.as_str());
+
     result.push_str(
-        r#"{
+        r#";
         fn get_partition_key(&self) -> &str {
             &self.partition_key
         }
