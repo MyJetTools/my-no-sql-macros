@@ -8,9 +8,13 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut src = input.to_string();
     let pos = find_struct_open(src.as_bytes());
 
+    let ast: syn::DeriveInput = syn::parse(input).unwrap();
 
-   let impl_below:TokenStream =  quote! {
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for {
+
+    quote!{
+        stringify!(#src) 
+
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ast.ident {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
@@ -25,15 +29,6 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                     .unix_microseconds
             }
         }
-    }
-    .into();
-
-
-    let impl_below  = impl_below.to_string();
-
-    quote!{
-        stringify!(#src)
-        stringify!(#impl_below)
     }.into()
 }
 
