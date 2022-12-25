@@ -29,6 +29,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                         }
                     }
                 }
+                result.push(item);
             }
             else{
  
@@ -76,9 +77,9 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                         }
                     }
 
-            }
+                }
         
-        result.push(item);
+
     }
 
     let struct_name = struct_name.unwrap();
