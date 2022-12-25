@@ -1,6 +1,58 @@
+use quote::quote;
 use std::collections::HashMap;
+use syn::{parse_macro_input, DeriveInput};
 
 use proc_macro::TokenStream;
+
+pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
+    let mut first_ident = None;
+
+    let mut result = TokenStream::new();
+
+    for token in input {
+        match token {
+            proc_macro::TokenTree::Group(group) => {
+                println!("Group: {:?}", group);
+            }
+            proc_macro::TokenTree::Ident(ident) => {
+                println!("Ident: {:?}", ident);
+
+                if first_ident.is_none() {
+                    first_ident = Some(ident);
+                }
+            }
+            proc_macro::TokenTree::Punct(punct) => {
+                println!("Punct: {:?}", punct);
+            }
+            proc_macro::TokenTree::Literal(literal) => {
+                println!("Literal: {:?}", literal);
+            }
+        }
+    }
+
+    let ident = first_ident.unwrap().to_string();
+
+    quote! {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ident{
+            fn get_partition_key(&self) -> &str {
+                &self.partition_key
+            }
+    
+            fn get_row_key(&self) -> &str {
+                &self.row_key
+            }
+    
+            fn get_time_stamp(&self) -> i64 {
+                rust_extensions::date_time::DateTimeAsMicroseconds::parse_iso_string(self.time_stamp.as_str())
+                    .unwrap()
+                    .unix_microseconds
+            }
+        }
+    }
+    .into()
+}
+
+/*
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut result = input.to_string();
@@ -45,11 +97,11 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
         fn get_partition_key(&self) -> &str {
             &self.partition_key
         }
-    
+
         fn get_row_key(&self) -> &str {
             &self.row_key
         }
-    
+
         fn get_time_stamp(&self) -> i64 {
             rust_extensions::date_time::DateTimeAsMicroseconds::parse_iso_string(self.time_stamp.as_str())
                 .unwrap()
@@ -88,3 +140,4 @@ fn get_params(attr: String) -> HashMap<String, String> {
 
     result
 }
+ */
