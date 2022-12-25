@@ -139,6 +139,9 @@ fn get_params(attr: String) -> HashMap<String, String> {
             value = &value[1..value.len()-1];
         }
 
+        if value.starts_with('\''){
+            value = &value[1..value.len()-1];
+        }
 
         result.insert(key, value.to_string());
     }
