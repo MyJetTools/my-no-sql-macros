@@ -1,4 +1,4 @@
-use proc_macro2::Ident;
+use proc_macro2::{Ident};
 use quote::{quote, ToTokens};
 use std::collections::HashMap;
 use syn::{parse_macro_input, DeriveInput};
@@ -11,7 +11,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
     let ast = proc_macro2::TokenStream::from(input);
 
-    let mut result = Vec::new();
+    let mut result: Vec<proc_macro2::TokenTree> = Vec::new();
 
     let mut struct_name = None;
     let mut passed_struct_name = false;
@@ -27,6 +27,32 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                         if ident.to_string() == "struct"{
                             passed_struct_name = true;
                         }
+                    }
+                }
+            }
+            else{
+                if let proc_macro2::TokenTree::Group(group) = &item{
+                    if group.delimiter() == proc_macro2::Delimiter::Brace{
+                        let mut tokens = group.stream().into_iter();
+                        let mut first = true;
+
+                        let mut result_tokens: Vec<proc_macro2::TokenTree> = Vec::new();
+                        while let Some(token) = tokens.next(){
+                            if first{
+
+                                let token:proc_macro2::TokenStream = 
+                                quote!{
+                                    #[serde(rename = "PartitionKey")]
+                                    pub partition_key: String,
+                                }.into();
+                                result_tokens.extend(token);
+
+                                first = false;
+                            }
+                            result_tokens.push(token);
+                        }
+
+                        result.push(proc_macro2::TokenTree::Group(proc_macro2::Group::new(proc_macro2::Delimiter::Brace, result_tokens.into_iter().collect())));
                     }
                 }
             }
