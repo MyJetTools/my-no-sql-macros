@@ -6,7 +6,7 @@ use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut src = input.to_string();
-    let pos = find_struct_open(result.as_bytes());
+    let pos = find_struct_open(src.as_bytes());
 
 
    let impl_below:TokenStream =  quote! {
