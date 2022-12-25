@@ -9,9 +9,7 @@ use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
-
     let ast = proc_macro2::TokenStream::from(input);
-
 
     let mut result = Vec::new();
 
@@ -36,7 +34,6 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         println!("{}", item);
-        println!("{:?}", item);
         result.push(item);
     }
 
