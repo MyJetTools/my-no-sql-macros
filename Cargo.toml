@@ -14,3 +14,4 @@ types-reader = { tag = "0.1.0", git = "https://github.com/MyJetTools/types-reade
 
 syn = { version = "*", features = ["extra-traits"] }
 quote = "*"
+proc-macro2 = "*"
