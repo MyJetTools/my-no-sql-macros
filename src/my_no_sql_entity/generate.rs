@@ -34,11 +34,14 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
  
                     if let proc_macro2::TokenTree::Group(group) = &item{
                         if group.delimiter() == proc_macro2::Delimiter::Brace{
-                            let mut tokens = group.stream().into_iter();
                             let mut first = true;
     
                             let mut result_tokens: Vec<proc_macro2::TokenTree> = Vec::new();
-                            while let Some(token) = tokens.next(){
+
+                            for token in group.stream(){
+
+                                println!("{:?}", token);
+
                                 if first{
     
                                     let token:proc_macro2::TokenStream = 
