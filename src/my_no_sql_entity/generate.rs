@@ -7,12 +7,9 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
-    let mut src = input.to_string();
-    let pos = find_struct_open(src.as_bytes());
-
     let ast = proc_macro2::TokenStream::from(input);
-
-
+    let mut src = ast.to_string();
+    let pos = find_struct_open(src.as_bytes());
 
 
 
@@ -22,7 +19,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
      
         #ast
 
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for Test {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for #src {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
