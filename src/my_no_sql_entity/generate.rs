@@ -16,6 +16,16 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
+    let mut params = get_params(attr.to_string());
+
+    let table_name = params.remove("table_name");
+
+    if table_name.is_none() {
+        panic!("Please specify table_name parameter");
+    }
+
+    let table_name = table_name.unwrap();
+
     for item in ast{
 
         if struct_name.is_none(){
@@ -89,6 +99,9 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
         #(#result)*
 
         impl my_no_sql_server_abstractions::MyNoSqlEntity for #struct_name {
+
+            const TABLE_NAME: &'static str = #table_name;
+
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
