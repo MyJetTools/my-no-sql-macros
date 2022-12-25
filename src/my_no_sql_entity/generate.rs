@@ -39,7 +39,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                             let mut result_tokens: Vec<proc_macro2::TokenTree> = Vec::new();
 
                             for token in group.stream(){
-
+                                println!("{}", token);
                                 println!("{:?}", token);
 
                                 if first{
