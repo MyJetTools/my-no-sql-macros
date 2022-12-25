@@ -1,6 +1,8 @@
-use quote::quote;
+use quote::{quote, ToTokens};
 use std::collections::HashMap;
 use syn::{parse_macro_input, DeriveInput};
+
+extern crate proc_macro;
 
 use proc_macro::TokenStream;
 
@@ -8,15 +10,19 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut src = input.to_string();
     let pos = find_struct_open(src.as_bytes());
 
-    let ast: syn::DeriveInput = syn::parse(input).unwrap();
+    let ast = proc_macro2::TokenStream::from(input);
 
-    let ident = ast.ident;
+
+
+
+
 
 
     quote!{
-        #(#src)
+     
+        #ast
 
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ident {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for Test {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
@@ -33,6 +39,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
         }
     }.into()
 }
+
 
 /*
 
