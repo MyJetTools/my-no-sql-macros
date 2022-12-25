@@ -20,27 +20,17 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
         if struct_name.is_none(){
             if let proc_macro2::TokenTree::Ident(ident) = &item{
-
-                let ident_as_str = ident.to_string();
-                println!("[{}]", ident_as_str);
-
-                if ident_as_str == "struct"{
                     if passed_struct_name{
-                        if struct_name.is_none(){
                             struct_name = Some(ident.clone());
-                        }
-    
                     }
                     else{
-                        passed_struct_name = true;
+                        if ident.to_string() == "struct"{
+                            passed_struct_name = true;
+                        }
                     }
                 }
-          
             }
-        }
- 
-
-        println!("{}", item);
+        
         result.push(item);
     }
 
