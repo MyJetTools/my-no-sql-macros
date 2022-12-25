@@ -10,11 +10,13 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
     let ast: syn::DeriveInput = syn::parse(input).unwrap();
 
+    let ident = ast.ident;
+
 
     quote!{
         stringify!(#src) 
 
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ast.ident {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ident {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
