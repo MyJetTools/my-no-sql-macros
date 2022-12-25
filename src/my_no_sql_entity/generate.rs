@@ -14,7 +14,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
 
     quote!{
-        #src
+        $src
 
         impl my_no_sql_server_abstractions::MyNoSqlEntity for #ident {
             fn get_partition_key(&self) -> &str {
