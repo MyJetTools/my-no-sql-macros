@@ -1,3 +1,4 @@
+use proc_macro2::Ident;
 use quote::{quote, ToTokens};
 use std::collections::HashMap;
 use syn::{parse_macro_input, DeriveInput};
@@ -14,19 +15,38 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
     let mut result = Vec::new();
 
+    let mut struct_name = None;
+    let mut passed_struct_name = false;
+
     for item in ast{
+
+        if let proc_macro2::TokenTree::Ident(ident) = &item{
+            if ident == "struct"{
+                if passed_struct_name{
+                    if struct_name.is_none(){
+                        struct_name = Some(ident.clone());
+                    }
+
+                }
+                else{
+                    passed_struct_name = true;
+                }
+            }
+      
+        }
+
         println!("{}", item);
         println!("{:?}", item);
         result.push(item);
     }
 
-
+    let struct_name = struct_name.unwrap();
 
     quote!{
      
         #(#result)*
 
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for Test {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for #struct_name {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
