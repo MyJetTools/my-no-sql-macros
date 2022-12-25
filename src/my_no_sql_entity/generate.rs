@@ -31,30 +31,48 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
                 }
             }
             else{
-                if let proc_macro2::TokenTree::Group(group) = &item{
-                    if group.delimiter() == proc_macro2::Delimiter::Brace{
-                        let mut tokens = group.stream().into_iter();
-                        let mut first = true;
+ 
+                    if let proc_macro2::TokenTree::Group(group) = &item{
+                        if group.delimiter() == proc_macro2::Delimiter::Brace{
+                            let mut tokens = group.stream().into_iter();
+                            let mut first = true;
+    
+                            let mut result_tokens: Vec<proc_macro2::TokenTree> = Vec::new();
+                            while let Some(token) = tokens.next(){
+                                if first{
+    
+                                    let token:proc_macro2::TokenStream = 
+                                    quote!{
+                                        #[serde(rename = "PartitionKey")]
+                                        pub partition_key: String,
+                                    }.into();
+                                    result_tokens.extend(token);
 
-                        let mut result_tokens: Vec<proc_macro2::TokenTree> = Vec::new();
-                        while let Some(token) = tokens.next(){
-                            if first{
+                                    let token:proc_macro2::TokenStream = 
+                                    quote!{
+                                        #[serde(rename = "RowKey")]
+                                        pub row_key: String,
+                                    }.into();
+                                    result_tokens.extend(token);
 
-                                let token:proc_macro2::TokenStream = 
-                                quote!{
-                                    #[serde(rename = "PartitionKey")]
-                                    pub partition_key: String,
-                                }.into();
-                                result_tokens.extend(token);
 
-                                first = false;
+                                    let token:proc_macro2::TokenStream = 
+                                    quote!{
+                                        #[serde(rename = "TimeStamp")]
+                                        pub time_stamp: String,
+                                    }.into();
+                                    result_tokens.extend(token);
+    
+    
+                                    first = false;
+                                }
+                                result_tokens.push(token);
                             }
-                            result_tokens.push(token);
+    
+                            result.push(proc_macro2::TokenTree::Group(proc_macro2::Group::new(proc_macro2::Delimiter::Brace, result_tokens.into_iter().collect())));
                         }
-
-                        result.push(proc_macro2::TokenTree::Group(proc_macro2::Group::new(proc_macro2::Delimiter::Brace, result_tokens.into_iter().collect())));
                     }
-                }
+
             }
         
         result.push(item);
