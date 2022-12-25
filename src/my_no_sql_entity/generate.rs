@@ -5,35 +5,12 @@ use syn::{parse_macro_input, DeriveInput};
 use proc_macro::TokenStream;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
-    let mut first_ident = None;
+    let mut src = input.to_string();
+    let pos = find_struct_open(result.as_bytes());
 
-    let mut result = TokenStream::new();
 
-    for token in input {
-        match token {
-            proc_macro::TokenTree::Group(group) => {
-                println!("Group: {:?}", group);
-            }
-            proc_macro::TokenTree::Ident(ident) => {
-                println!("Ident: {:?}", ident);
-
-                if first_ident.is_none() {
-                    first_ident = Some(ident);
-                }
-            }
-            proc_macro::TokenTree::Punct(punct) => {
-                println!("Punct: {:?}", punct);
-            }
-            proc_macro::TokenTree::Literal(literal) => {
-                println!("Literal: {:?}", literal);
-            }
-        }
-    }
-
-    let ident = first_ident.unwrap().to_string();
-
-    quote! {
-        impl my_no_sql_server_abstractions::MyNoSqlEntity for #ident{
+   let impl_below:TokenStream =  quote! {
+        impl my_no_sql_server_abstractions::MyNoSqlEntity for {
             fn get_partition_key(&self) -> &str {
                 &self.partition_key
             }
@@ -49,7 +26,15 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
             }
         }
     }
-    .into()
+    .into();
+
+
+    let impl_below  = impl_below.to_string();
+
+    quote!{
+        stringify!(#src)
+        stringify!(#impl_below)
+    }.into()
 }
 
 /*
@@ -112,7 +97,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
     result.parse().unwrap()
 }
-
+ */
 fn find_struct_open(src: &[u8]) -> Option<usize> {
     for i in 0..src.len() {
         if src[i] == b'{' {
@@ -122,6 +107,8 @@ fn find_struct_open(src: &[u8]) -> Option<usize> {
 
     None
 }
+
+
 
 fn get_params(attr: String) -> HashMap<String, String> {
     let count_commas = attr.chars().filter(|&c| c == ',').count();
@@ -140,4 +127,4 @@ fn get_params(attr: String) -> HashMap<String, String> {
 
     result
 }
- */
+
