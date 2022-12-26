@@ -1,4 +1,4 @@
-use macros_utils::MacrosParams;
+use macros_utils::AttributeParams;
 use quote::quote;
 
 extern crate proc_macro;
@@ -13,7 +13,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
-    let params = MacrosParams::new(attr.to_string());
+    let params = AttributeParams::new(attr.to_string());
 
     let table_name = params.get_from_single_or_named("table_name");
 
