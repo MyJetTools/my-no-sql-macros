@@ -44,30 +44,14 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
 
                     for token in group.stream() {
                         if first {
-                            let token: proc_macro2::TokenStream = quote! {
-                                #[serde(rename = "PartitionKey")]
-                                pub partition_key: String,
-                            }
-                            .into();
-                            result_tokens.extend(token);
-
-                            let token: proc_macro2::TokenStream = quote! {
-                                #[serde(rename = "RowKey")]
-                                pub row_key: String,
-                            }
-                            .into();
-                            result_tokens.extend(token);
-
-                            let token: proc_macro2::TokenStream = quote! {
-                                #[serde(rename = "TimeStamp")]
-                                pub time_stamp: String,
-                            }
-                            .into();
-                            result_tokens.extend(token);
-
+                            populate_tokens(&mut result_tokens);
                             first = false;
                         }
                         result_tokens.push(token);
+                    }
+
+                    if result_tokens.len() == 0 {
+                        populate_tokens(&mut result_tokens);
                     }
 
                     result.push(proc_macro2::TokenTree::Group(proc_macro2::Group::new(
@@ -106,4 +90,27 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     };
 
     result.into()
+}
+
+fn populate_tokens(result_tokens: &mut Vec<proc_macro2::TokenTree>) {
+    let token: proc_macro2::TokenStream = quote! {
+        #[serde(rename = "PartitionKey")]
+        pub partition_key: String,
+    }
+    .into();
+    result_tokens.extend(token);
+
+    let token: proc_macro2::TokenStream = quote! {
+        #[serde(rename = "RowKey")]
+        pub row_key: String,
+    }
+    .into();
+    result_tokens.extend(token);
+
+    let token: proc_macro2::TokenStream = quote! {
+        #[serde(rename = "TimeStamp")]
+        pub time_stamp: String,
+    }
+    .into();
+    result_tokens.extend(token);
 }
