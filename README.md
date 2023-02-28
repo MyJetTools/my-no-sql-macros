@@ -8,3 +8,5 @@ pub struct TestEntity {
     pub my_field_2: usize,
 }
 ```
+
+* implements all the fields and traits make it possible to use in Reader and Writer for the table "test";
