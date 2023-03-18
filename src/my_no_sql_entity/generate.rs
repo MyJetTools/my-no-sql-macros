@@ -1,9 +1,9 @@
-use macros_utils::AttributeParams;
 use quote::quote;
 
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use types_reader::attribute_params::AttributeParams;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let ast = proc_macro2::TokenStream::from(input);
@@ -13,15 +13,17 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
-    let params = AttributeParams::new(attr.to_string());
+    let params = match AttributeParams::from_token_string(attr.into()) {
+        Ok(result) => result,
+        Err(err) => return err.into_compile_error().into(),
+    };
 
-    let table_name = params.get_from_single_or_named("table_name");
+    let table_name = match params.get_from_single_or_named("table_name") {
+        Ok(result) => result,
+        Err(err) => return err.into_compile_error().into(),
+    };
 
-    if table_name.is_none() {
-        panic!("Please specify table_name parameter");
-    }
-
-    let table_name = table_name.as_ref().unwrap().get_value_as_str();
+    let table_name = table_name.as_str();
 
     for item in ast {
         if struct_name.is_none() {
