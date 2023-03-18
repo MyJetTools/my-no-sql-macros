@@ -13,7 +13,13 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
-    let params = match AttributeParams::from_token_string(attr.into()) {
+    println!("proc_macro::attr: {}", attr.to_string());
+
+    let attr: proc_macro2::TokenStream = attr.into();
+
+    println!("proc_macro2::attr: {}", attr.to_string());
+
+    let params = match AttributeParams::from_token_string(attr) {
         Ok(result) => result,
         Err(err) => return err.into_compile_error().into(),
     };
