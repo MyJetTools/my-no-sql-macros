@@ -6,14 +6,16 @@ use proc_macro::TokenStream;
 use types_reader::attribute_params::AttributeParams;
 
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
+    println!("proc_macro::attr: {}", attr.to_string());
+
+    println!("proc_macro::input: {}", input.to_string());
+
     let ast = proc_macro2::TokenStream::from(input);
 
     let mut result: Vec<proc_macro2::TokenTree> = Vec::new();
 
     let mut struct_name = None;
     let mut passed_struct_name = false;
-
-    println!("proc_macro::attr: {}", attr.to_string());
 
     let attr: proc_macro2::TokenStream = attr.into();
 
