@@ -8,8 +8,6 @@ use types_reader::attribute_params::AttributeParams;
 pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let ast = proc_macro2::TokenStream::from(input);
 
-    println!("ast: {:?}", ast);
-
     let mut result: Vec<proc_macro2::TokenTree> = Vec::new();
 
     let mut struct_name = None;
