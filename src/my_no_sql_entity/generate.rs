@@ -17,7 +17,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> Result<TokenStream, sy
 
     let table_name = params
         .get_from_single_or_named("table_name")?
-        .unwrap_as_single_value()?
+        .unwrap_as_string_value()?
         .as_str();
 
     for item in ast {
