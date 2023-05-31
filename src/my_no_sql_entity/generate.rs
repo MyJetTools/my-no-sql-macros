@@ -3,9 +3,9 @@ use quote::quote;
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use types_reader::attribute_params::AttributeParams;
+use types_reader::ParamsList;
 
-pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
+pub fn generate(attr: TokenStream, input: TokenStream) -> Result<TokenStream, syn::Error> {
     let ast = proc_macro2::TokenStream::from(input);
 
     let mut result: Vec<proc_macro2::TokenTree> = Vec::new();
@@ -13,17 +13,12 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
-    let params = match AttributeParams::from_token_string(attr.into()) {
-        Ok(result) => result,
-        Err(err) => return err.into_compile_error().into(),
-    };
+    let params = ParamsList::new(attr.into())?;
 
-    let table_name = match params.get_from_single_or_named("table_name") {
-        Ok(result) => result,
-        Err(err) => return err.into_compile_error().into(),
-    };
-
-    let table_name = table_name.as_str();
+    let table_name = params
+        .get_from_single_or_named("table_name")?
+        .unwrap_as_single_value()?
+        .as_str();
 
     for item in ast {
         if struct_name.is_none() {
@@ -91,7 +86,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> TokenStream {
         }
     };
 
-    result.into()
+    Ok(result.into())
 }
 
 fn populate_tokens(result_tokens: &mut Vec<proc_macro2::TokenTree>) {
