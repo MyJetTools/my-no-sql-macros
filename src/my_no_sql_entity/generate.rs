@@ -13,7 +13,7 @@ pub fn generate(attr: TokenStream, input: TokenStream) -> Result<TokenStream, sy
     let mut struct_name = None;
     let mut passed_struct_name = false;
 
-    let params = ParamsList::new(attr.into())?;
+    let params = ParamsList::new(attr.into(), || None)?;
 
     let table_name = params
         .get_from_single_or_named("table_name")?
